@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React Hooks 课程管理系统</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+    
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-item {
+      background: rgba(255,255,255,0.2);
+      padding: 15px 30px;
+      border-radius: 10px;
+      color: white;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    
+    .stat-item .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    
+    .stat-item .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+    
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .search-input {
+      flex: 1;
+      padding: 12px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .add-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+    
+    .add-input {
+      flex: 1;
+      padding: 12px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    
+    .add-input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background: #059669;
+    }
+    
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+    
+    .btn-warning {
+      background: #f59e0b;
+      color: white;
+    }
+    
+    .btn-warning:hover {
+      background: #d97706;
+    }
+    
+    .btn-sm {
+      padding: 8px 15px;
+      font-size: 0.9rem;
+    }
+    
+    .course-list {
+      display: grid;
+      gap: 15px;
+    }
+    
+    .course-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      transition: all 0.3s;
+      border-left: 4px solid #667eea;
+    }
+    
+    .course-item:hover {
+      background: #f0f1f2;
+      transform: translateX(5px);
+    }
+    
+    .course-info {
+      flex: 1;
+    }
+    
+    .course-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    
+    .course-id {
+      font-size: 0.85rem;
+      color: #999;
+    }
+    
+    .course-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      color: #999;
+    }
+    
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 15px;
+    }
+    
+    .edit-form {
+      display: flex;
+      gap: 10px;
+      flex: 1;
+    }
+    
+    .edit-input {
+      flex: 1;
+      padding: 8px 15px;
+      border: 2px solid #667eea;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    
+    .edit-input:focus {
+      outline: none;
+    }
+    
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      background: #10b981;
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+      animation: slideIn 0.3s ease;
+      z-index: 1000;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 50px;
+      color: #667eea;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useMemo, useCallback } = React;
+    
+    // ==================== 自定义 Hooks ====================
+    
+    // useLocalStorage - 封装本地存储逻辑
+    function useLocalStorage(key, initialValue) {
+      // 读取本地存储
+      const readValue = () => {
+        try {
+          const item = window.localStorage.getItem(key);
+          return item ? JSON.parse(item) : initialValue;
+        } catch (error) {
+          console.warn(`Error reading localStorage key "${key}":`, error);
+          return initialValue;
+        }
+      };
+      
+      const [storedValue, setStoredValue] = useState(readValue);
+      
+      // 返回一个包装后的 setter 函数
+      const setValue = useCallback((value) => {
+        try {
+          // 允许值作为函数传递
+          const valueToStore = value instanceof Function ? value(storedValue) : value;
+          // 保存状态
+          setStoredValue(valueToStore);
+          // 保存到本地存储
+          window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        } catch (error) {
+          console.warn(`Error setting localStorage key "${key}":`, error);
+        }
+      }, [key, storedValue]);
+      
+      // 监听其他标签页的更改
+      useEffect(() => {
+        const handleStorageChange = (e) => {
+          if (e.key === key && e.newValue) {
+            setStoredValue(JSON.parse(e.newValue));
+          }
+        };
+        
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+      }, [key]);
+      
+      return [storedValue, setValue];
+    }
+    
+    // useDebounce - 搜索防抖逻辑
+    function useDebounce(value, delay) {
+      const [debouncedValue, setDebouncedValue] = useState(value);
+      
+      useEffect(() => {
+        const handler = setTimeout(() => {
+          setDebouncedValue(value);
+        }, delay);
+        
+        return () => clearTimeout(handler);
+      }, [value, delay]);
+      
+      return debouncedValue;
+    }
+    
+    // ==================== 组件 ====================
+    
+    // 课程列表项组件
+    function CourseItem({ course, onStudy, onDelete, onEdit, onSaveEdit, onCancelEdit, editingId, editValue, onEditChange }) {
+      const inputRef = useRef(null);
+      
+      // 当进入编辑模式时，自动聚焦输入框
+      useEffect(() => {
+        if (editingId === course.id && inputRef.current) {
+          inputRef.current.focus();
+        }
+      }, [editingId, course.id]);
+      
+      if (editingId === course.id) {
+        return (
+          <div className="course-item">
+            <div className="edit-form">
+              <input
+                ref={inputRef}
+                type="text"
+                className="edit-input"
+                value={editValue}
+                onChange={(e) => onEditChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') onSaveEdit(course.id);
+                  if (e.key === 'Escape') onCancelEdit();
+                }}
+              />
+              <button className="btn btn-success btn-sm" onClick={() => onSaveEdit(course.id)}>保存</button>
+              <button className="btn btn-warning btn-sm" onClick={onCancelEdit}>取消</button>
+            </div>
+          </div>
+        );
+      }
+      
+      return (
+        <div className="course-item">
+          <div className="course-info">
+            <div className="course-name">{course.name}</div>
+            <div className="course-id">课程ID: {course.id}</div>
+          </div>
+          <div className="course-actions">
+            <button className="btn btn-success btn-sm" onClick={() => onStudy(course)}>
+              学习
+            </button>
+            <button className="btn btn-warning btn-sm" onClick={() => onEdit(course)}>
+              编辑
+            </button>
+            <button className="btn btn-danger btn-sm" onClick={() => onDelete(course.id)}>
+              删除
+            </button>
+          </div>
+        </div>
+      );
+    }
+    
+    // 课程列表组件
+    function CourseList({ courses, onStudy, onDelete, onEdit, onSaveEdit, onCancelEdit, editingId, editValue, onEditChange }) {
+      if (courses.length === 0) {
+        return (
+          <div className="empty-state">
+            <div className="empty-state-icon">📚</div>
+            <p>暂无课程，请添加课程开始学习</p>
+          </div>
+        );
+      }
+      
+      return (
+        <div className="course-list">
+          {courses.map(course => (
+            <CourseItem
+              key={course.id}
+              course={course}
+              onStudy={onStudy}
+              onDelete={onDelete}
+              onEdit={onEdit}
+              onSaveEdit={onSaveEdit}
+              onCancelEdit={onCancelEdit}
+              editingId={editingId}
+              editValue={editValue}
+              onEditChange={onEditChange}
+            />
+          ))}
+        </div>
+      );
+    }
+    
+    // 统计信息组件
+    function Stats({ totalCount, filteredCount }) {
+      return (
+        <div className="stats">
+          <div className="stat-item">
+            <div className="stat-number">{totalCount}</div>
+            <div className="stat-label">总课程数</div>
+          </div>
+          <div className="stat-item">
+            <div className="stat-number">{filteredCount}</div>
+            <div className="stat-label">显示数量</div>
+          </div>
+        </div>
+      );
+    }
+    
+    // Toast 提示组件
+    function Toast({ message, show }) {
+      if (!show) return null;
+      
+      return (
+        <div className="toast">{message}</div>
+      );
+    }
+    
+    // ==================== 主应用组件 ====================
+    
+    function App() {
+      // 使用自定义 Hook 管理本地存储
+      const [courses, setCourses] = useLocalStorage('courses', []);
+      
+      // 状态管理
+      const [inputValue, setInputValue] = useState('');
+      const [searchKeyword, setSearchKeyword] = useState('');
+      const [editingId, setEditingId] = useState(null);
+      const [editValue, setEditValue] = useState('');
+      const [toast, setToast] = useState({ show: false, message: '' });
+      
+      // 使用 useRef 实现输入框自动聚焦
+      const inputRef = useRef(null);
+      
+      // 使用 useDebounce 优化搜索
+      const debouncedSearch = useDebounce(searchKeyword, 300);
+      
+      // 使用 useMemo 缓存筛选后的课程列表
+      const filteredCourses = useMemo(() => {
+        if (!debouncedSearch.trim()) {
+          return courses;
+        }
+        return courses.filter(course => 
+          course.name.toLowerCase().includes(debouncedSearch.toLowerCase())
+        );
+      }, [courses, debouncedSearch]);
+      
+      // 显示 Toast 提示
+      const showToast = useCallback((message) => {
+        setToast({ show: true, message });
+        setTimeout(() => {
+          setToast({ show: false, message: '' });
+        }, 2000);
+      }, []);
+      
+      // 添加课程 - 使用 useCallback 优化
+      const handleAddCourse = useCallback(() => {
+        const trimmedValue = inputValue.trim();
+        
+        if (!trimmedValue) {
+          showToast('请输入课程名称！');
+          return;
+        }
+        
+        const newCourse = {
+          id: Date.now(),
+          name: trimmedValue,
+          createdAt: new Date().toISOString()
+        };
+        
+        setCourses(prev => [...prev, newCourse]);
+        setInputValue('');
+        
+        // 使用 useRef 实现自动聚焦
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+        
+        showToast(`课程 "${trimmedValue}" 添加成功！`);
+      }, [inputValue, setCourses, showToast]);
+      
+      // 删除课程 - 使用 useCallback 优化
+      const handleDeleteCourse = useCallback((id) => {
+        const courseToDelete = courses.find(c => c.id === id);
+        setCourses(prev => prev.filter(course => course.id !== id));
+        showToast(`课程 "${courseToDelete?.name}" 已删除`);
+      }, [courses, setCourses, showToast]);
+      
+      // 学习课程 - 使用 useCallback 优化
+      const handleStudyCourse = useCallback((course) => {
+        showToast(`正在学习 ${course.name}...`);
+      }, [showToast]);
+      
+      // 开始编辑 - 使用 useCallback 优化
+      const handleEditCourse = useCallback((course) => {
+        setEditingId(course.id);
+        setEditValue(course.name);
+      }, []);
+      
+      // 保存编辑 - 使用 useCallback 优化
+      const handleSaveEdit = useCallback((id) => {
+        const trimmedValue = editValue.trim();
+        if (!trimmedValue) {
+          showToast('课程名称不能为空！');
+          return;
+        }
+        
+        setCourses(prev => prev.map(course => 
+          course.id === id ? { ...course, name: trimmedValue } : course
+        ));
+        setEditingId(null);
+        setEditValue('');
+        showToast('课程更新成功！');
+      }, [editValue, setCourses, showToast]);
+      
+      // 取消编辑 - 使用 useCallback 优化
+      const handleCancelEdit = useCallback(() => {
+        setEditingId(null);
+        setEditValue('');
+      }, []);
+      
+      // 编辑输入变化 - 使用 useCallback 优化
+      const handleEditChange = useCallback((value) => {
+        setEditValue(value);
+      }, []);
+      
+      // 搜索输入变化
+      const handleSearchChange = useCallback((e) => {
+        setSearchKeyword(e.target.value);
+      }, []);
+      
+      // 输入框变化
+      const handleInputChange = useCallback((e) => {
+        setInputValue(e.target.value);
+      }, []);
+      
+      // 回车添加课程
+      const handleKeyPress = useCallback((e) => {
+        if (e.key === 'Enter') {
+          handleAddCourse();
+        }
+      }, [handleAddCourse]);
+      
+      // 页面加载时聚焦输入框
+      useEffect(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }, []);
+      
+      return (
+        <div className="container">
+          <div className="header">
+            <h1>📚 React Hooks 课程管理系统</h1>
+            <p>掌握 React Hooks 的强大功能</p>
+          </div>
+          
+          <Stats 
+            totalCount={courses.length} 
+            filteredCount={filteredCourses.length} 
+          />
+          
+          <div className="card">
+            {/* 搜索框 */}
+            <div className="search-box">
+              <input
+                type="text"
+                className="search-input"
+                placeholder="🔍 搜索课程名称..."
+                value={searchKeyword}
+                onChange={handleSearchChange}
+              />
+            </div>
+            
+            {/* 添加课程表单 */}
+            <div className="add-form">
+              <input
+                ref={inputRef}
+                type="text"
+                className="add-input"
+                placeholder="输入新课程名称..."
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyPress}
+              />
+              <button className="btn btn-primary" onClick={handleAddCourse}>
+                添加课程
+              </button>
+            </div>
+            
+            {/* 课程列表 */}
+            <CourseList
+              courses={filteredCourses}
+              onStudy={handleStudyCourse}
+              onDelete={handleDeleteCourse}
+              onEdit={handleEditCourse}
+              onSaveEdit={handleSaveEdit}
+              onCancelEdit={handleCancelEdit}
+              editingId={editingId}
+              editValue={editValue}
+              onEditChange={handleEditChange}
+            />
+          </div>
+          
+          {/* Toast 提示 */}
+          <Toast message={toast.message} show={toast.show} />
+        </div>
+      );
+    }
+    
+    // 渲染应用
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
