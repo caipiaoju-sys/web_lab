@@ -13,7 +13,10 @@
 
         body {
             font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%), url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             min-height: 100vh;
             color: #fff;
         }
@@ -73,6 +76,18 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.1);
             transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b, #4ecdc4);
         }
 
         .stat-card:hover {
@@ -80,10 +95,19 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
+        .stat-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
         .stat-card .number {
             font-size: 3rem;
             font-weight: bold;
-            color: #ffd700;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .stat-card .label {
@@ -118,16 +142,32 @@
             margin-bottom: 30px;
         }
 
+        .search-box {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            z-index: 1;
+        }
+
         .search-box input {
             width: 100%;
-            padding: 15px 25px;
+            padding: 18px 25px 18px 55px;
             font-size: 1.1rem;
-            border: none;
+            border: 2px solid rgba(255,255,255,0.1);
             border-radius: 50px;
             background: rgba(255,255,255,0.1);
             color: #fff;
             outline: none;
             transition: all 0.3s;
+            backdrop-filter: blur(10px);
         }
 
         .search-box input::placeholder {
@@ -136,31 +176,42 @@
 
         .search-box input:focus {
             background: rgba(255,255,255,0.15);
-            box-shadow: 0 0 20px rgba(255,215,0,0.2);
+            border-color: rgba(255,215,0,0.5);
+            box-shadow: 0 0 30px rgba(255,215,0,0.2);
         }
 
         /* Filter */
         .filter-buttons {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 30px;
             flex-wrap: wrap;
         }
 
         .filter-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 25px;
-            background: rgba(255,255,255,0.1);
+            padding: 12px 24px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            background: rgba(255,255,255,0.05);
             color: #fff;
             cursor: pointer;
             transition: all 0.3s;
             font-size: 0.95rem;
+            font-weight: 500;
         }
 
-        .filter-btn:hover, .filter-btn.active {
+        .filter-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,215,0,0.3);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
             background: linear-gradient(135deg, #ffd700, #ff6b6b);
             color: #1a1a2e;
+            border-color: transparent;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(255,215,0,0.3);
         }
 
         /* Studios Grid */
@@ -178,12 +229,33 @@
             border: 1px solid rgba(255,255,255,0.1);
             transition: all 0.3s;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .studio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg,
+                rgba(255,215,0,0.05) 0%,
+                rgba(78,205,196,0.05) 50%,
+                rgba(255,107,107,0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
         .studio-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 15px 40px rgba(0,0,0,0.3);
             border-color: rgba(255,215,0,0.3);
+        }
+
+        .studio-card:hover::before {
+            opacity: 1;
         }
 
         .studio-card .id-badge {
@@ -195,6 +267,8 @@
             font-weight: bold;
             font-size: 0.9rem;
             margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
         }
 
         .studio-card h3 {
@@ -202,12 +276,16 @@
             margin-bottom: 15px;
             color: #fff;
             line-height: 1.4;
+            position: relative;
+            z-index: 1;
         }
 
         .studio-card .info {
             display: flex;
             flex-direction: column;
             gap: 10px;
+            position: relative;
+            z-index: 1;
         }
 
         .studio-card .info-item {
@@ -222,6 +300,39 @@
             color: #ffd700;
             font-size: 1.1rem;
             min-width: 20px;
+        }
+
+        /* Category badge colors */
+        .studio-card .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+
+        .studio-card .category-badge.street {
+            background: rgba(78,205,196,0.2);
+            color: #4ecdc4;
+            border: 1px solid rgba(78,205,196,0.3);
+        }
+
+        .studio-card .category-badge.community {
+            background: rgba(255,107,107,0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(255,107,107,0.3);
+        }
+
+        .studio-card .category-badge.circle {
+            background: rgba(255,215,0,0.2);
+            color: #ffd700;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+
+        .studio-card .category-badge.professional {
+            background: rgba(138,43,226,0.2);
+            color: #8a2be2;
+            border: 1px solid rgba(138,43,226,0.3);
         }
 
         /* Footer */
@@ -261,6 +372,19 @@
             overflow-y: auto;
             position: relative;
             border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(78,205,196,0.1) 100%);
+            border-radius: 25px 25px 0 0;
+            pointer-events: none;
         }
 
         .modal-close {
@@ -271,10 +395,19 @@
             color: #888;
             cursor: pointer;
             transition: color 0.3s;
+            z-index: 10;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
         }
 
         .modal-close:hover {
             color: #ffd700;
+            background: rgba(255,215,0,0.2);
         }
 
         .modal h2 {
@@ -284,24 +417,47 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            position: relative;
+            z-index: 1;
+            padding-top: 20px;
         }
 
         .modal .detail-item {
             margin-bottom: 20px;
-            padding: 15px;
+            padding: 20px;
             background: rgba(255,255,255,0.05);
-            border-radius: 10px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal .detail-item:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,215,0,0.2);
+            transform: translateX(5px);
         }
 
         .modal .detail-item .label {
             color: #888;
             font-size: 0.9rem;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal .detail-item .label::before {
+            content: '◆';
+            color: #ffd700;
+            font-size: 0.7rem;
         }
 
         .modal .detail-item .value {
             color: #fff;
             font-size: 1.1rem;
+            padding-left: 20px;
         }
 
         /* Responsive */
@@ -353,21 +509,29 @@
 
         <div class="stats">
             <div class="stat-card">
-                <div class="number">50</div>
+                <span class="icon">🏛️</span>
+                <div class="number" id="totalCount">50</div>
                 <div class="label">委员工作室总数</div>
             </div>
             <div class="stat-card">
-                <div class="number">14</div>
-                <div class="label">街道委员小组全覆盖</div>
+                <span class="icon">🏢</span>
+                <div class="number" id="streetCount">14</div>
+                <div class="label">街道委员小组</div>
             </div>
             <div class="stat-card">
-                <div class="number">✓</div>
-                <div class="label">年度考核全覆盖</div>
-                <div class="star-ratings">
-                    <div class="star-item"><span class="star">⭐⭐⭐⭐⭐</span> 25</div>
-                    <div class="star-item"><span class="star">⭐⭐⭐⭐</span> 17</div>
-                    <div class="star-item"><span class="star">⭐⭐⭐</span> 4</div>
-                </div>
+                <span class="icon">🏘️</span>
+                <div class="number" id="communityCount">9</div>
+                <div class="label">社区工作室</div>
+            </div>
+            <div class="stat-card">
+                <span class="icon">👥</span>
+                <div class="number" id="circleCount">4</div>
+                <div class="label">界别工作室</div>
+            </div>
+            <div class="stat-card">
+                <span class="icon">⭐</span>
+                <div class="number" id="professionalCount">23</div>
+                <div class="label">特色工作室</div>
             </div>
         </div>
 
@@ -472,11 +636,11 @@
                     studio.leader.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     studio.address.toLowerCase().includes(searchTerm.toLowerCase());
                 
-                const matchesFilter = currentFilter === 'all' || 
+                const matchesFilter = currentFilter === 'all' ||
                     (currentFilter === '街道' && studio.category === '街道') ||
                     (currentFilter === '界别' && studio.category === '界别') ||
                     (currentFilter === '社区' && studio.category === '社区') ||
-                    (currentFilter === '专业' && (studio.category === '专业' || studio.category === '社区'));
+                    (currentFilter === '专业' && studio.category === '专业');
                 
                 return matchesSearch && matchesFilter;
             });
@@ -494,13 +658,20 @@
                             <span class="icon">📍</span>
                             <span>${studio.address}</span>
                         </div>
-                        <div class="info-item">
-                            <span class="icon">🏷️</span>
-                            <span>${getCategoryLabel(studio.category)}</span>
-                        </div>
+                        <span class="category-badge ${getCategoryClass(studio.category)}">${getCategoryLabel(studio.category)}</span>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function getCategoryClass(category) {
+            const classes = {
+                '街道': 'street',
+                '界别': 'circle',
+                '社区': 'community',
+                '专业': 'professional'
+            };
+            return classes[category] || '';
         }
 
         function getCategoryLabel(category) {
@@ -513,8 +684,20 @@
             return labels[category] || category;
         }
 
+        // 哈希路由处理
+        function handleHashChange() {
+            const hash = window.location.hash;
+            
+            if (hash.startsWith('#studio/')) {
+                const id = parseInt(hash.replace('#studio/', ''));
+                showModal(id, false); // 不再更新hash，避免循环
+            } else {
+                closeModal(false);
+            }
+        }
+
         // Modal
-        function showModal(id) {
+        function showModal(id, updateHash = true) {
             const studio = studiosData.find(s => s.id === id);
             if (!studio) return;
 
@@ -538,10 +721,20 @@
                 </div>
             `;
             modal.classList.add('active');
+            
+            // 更新URL哈希
+            if (updateHash) {
+                window.location.hash = `studio/${id}`;
+            }
         }
 
-        function closeModal() {
+        function closeModal(updateHash = true) {
             modal.classList.remove('active');
+            
+            // 清除URL哈希
+            if (updateHash && window.location.hash) {
+                history.pushState('', document.title, window.location.pathname + window.location.search);
+            }
         }
 
         // Event Listeners
@@ -565,8 +758,30 @@
             }
         });
 
-        // Initial render
-        renderStudios();
+        // 监听哈希变化事件
+        window.addEventListener('hashchange', handleHashChange);
+
+        // 计算统计数据
+        function updateStats() {
+            const total = studiosData.length;
+            const street = studiosData.filter(s => s.category === '街道').length;
+            const community = studiosData.filter(s => s.category === '社区').length;
+            const circle = studiosData.filter(s => s.category === '界别').length;
+            const professional = studiosData.filter(s => s.category === '专业').length;
+            
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('streetCount').textContent = street;
+            document.getElementById('communityCount').textContent = community;
+            document.getElementById('circleCount').textContent = circle;
+            document.getElementById('professionalCount').textContent = professional;
+        }
+
+        // 页面加载时初始化路由
+        window.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            renderStudios();
+            handleHashChange(); // 根据当前哈希初始化
+        });
     </script>
 </body>
 </html>
